@@ -1,0 +1,49 @@
+<!DOCTYPE html>  <html> <head>   <title>redis-lua.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               redis-lua.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p>Copyright 2010 Paul Shirren <a href="m&#x61;&#x69;&#x6C;&#x74;&#x6F;:&#x73;&#104;&#x69;r&#114;&#x6F;&#64;s&#x68;&#x69;&#x72;&#x72;&#111;&#x2E;&#99;&#x6F;&#109;">&#x73;&#104;&#x69;r&#114;&#x6F;&#64;s&#x68;&#x69;&#x72;&#x72;&#111;&#x2E;&#99;&#x6F;&#109;</a></p>
+
+<p>MIT licenced</p>
+
+<p>Patch lua commands into node-redis prototype. Does not assume node-redis
+has been patched with scripting support so can use standard version.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">createHash = </span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;crypto&#39;</span><span class="p">).</span><span class="nx">createHash</span>
+<span class="nv">RedisClient = </span><span class="nx">require</span><span class="p">(</span><span class="s1">&#39;redis&#39;</span><span class="p">).</span><span class="nx">RedisClient</span>
+
+<span class="nv">sha = </span><span class="nf">(str) -&gt;</span>
+  <span class="nx">createHash</span><span class="p">(</span><span class="s1">&#39;sha1&#39;</span><span class="p">).</span><span class="nx">update</span><span class="p">(</span><span class="nx">str</span><span class="p">).</span><span class="nx">digest</span><span class="p">(</span><span class="s1">&#39;hex&#39;</span><span class="p">)</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h3>Eample usage</h3>
+
+<pre><code>r = require('redis').createClient()
+lua = require('node_redis_lua').lua
+
+lua 'myset', 2, 'return redis.call("set", KEYS[1], KEYS[2])'
+lua 'myget', 1, 'return redis.call("get", KEYS[1])'
+
+r.myset 'testing', 'surprise', (err, res) -&gt;
+err || r.myset 'testing', 'surprise', (err, res) -&gt;
+    err || r.myget 'testing', (err, res) -&gt;
+      err || console.log "It worked, testing = #{res}"
+      r.quit()
+</code></pre>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">exports.lua = </span><span class="nf">(name, keys, script) -&gt;</span>
+
+  <span class="nv">script_sha = </span><span class="kc">null</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Use send_command to work with unpatched node-redis without eval, evalsha</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">eval_cmd = </span><span class="nf">(redis, params, cb) -&gt;</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">unshift</span> <span class="nx">script</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">unshift</span> <span class="s1">&#39;eval&#39;</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">push</span> <span class="nx">cb</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">send_command</span><span class="p">.</span><span class="nx">apply</span> <span class="nx">redis</span><span class="p">,</span> <span class="nx">params</span>
+
+  <span class="nv">evalsha_cmd = </span><span class="nf">(redis, params, cb) -&gt;</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">unshift</span> <span class="nx">script_sha</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">unshift</span> <span class="s1">&#39;evalsha&#39;</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">push</span> <span class="nx">cb</span>
+    <span class="nx">redis</span><span class="p">.</span><span class="nx">send_command</span><span class="p">.</span><span class="nx">apply</span> <span class="nx">redis</span><span class="p">,</span> <span class="nx">params</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Add our new Lua command into the RedisClient prototype so it looks
+like native redis</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">RedisClient</span><span class="p">.</span><span class="nx">prototype</span><span class="p">[</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nf">(params..., cb) -&gt;</span>
+    <span class="nv">redis = </span><span class="k">this</span>
+    <span class="nx">params</span><span class="p">.</span><span class="nx">unshift</span> <span class="nx">keys</span>
+
+    <span class="k">if</span> <span class="nx">script_sha</span>
+      <span class="nx">evalsha_cmd</span> <span class="nx">redis</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nf">(err, res) -&gt;</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Is this really the right way to test?</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">if</span> <span class="nx">err</span> <span class="o">and</span> <span class="nx">err</span><span class="p">.</span><span class="nx">message</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;NOSCRIPT&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+          <span class="nx">eval_cmd</span> <span class="nx">redis</span><span class="p">,</span> <span class="nx">params</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="nx">cb</span>
+        <span class="k">else</span>
+          <span class="nx">cb</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">res</span>
+    <span class="k">else</span>
+      <span class="nv">script_sha = </span><span class="nx">script_sha</span> <span class="o">or</span> <span class="nx">sha</span> <span class="nx">script</span>
+      <span class="nx">eval_cmd</span> <span class="nx">redis</span><span class="p">,</span> <span class="nx">params</span><span class="p">,</span> <span class="nx">cb</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
