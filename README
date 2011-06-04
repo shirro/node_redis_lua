@@ -13,7 +13,7 @@ Installation. Not in npm repo yet so install from github source.
     npm install redis
     npm install .
 
-To use require lua:
+To use add lua support to redis module:
 
     redis = require('redis')
     require('redis-lua').attachLua(redis)
