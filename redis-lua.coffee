@@ -14,18 +14,13 @@ RedisClient = require('redis').RedisClient
 sha = (str) ->
   createHash('sha1').update(str).digest('hex')
 
-#### Eample usage
+#### Example usage
 #     r = require('redis').createClient()
 #     lua = require('node_redis_lua').lua
 #
-#     lua 'myset', 2, 'return redis.call("set", KEYS[1], KEYS[2])'
-#     lua 'myget', 1, 'return redis.call("get", KEYS[1])'
+#     lua 'mycmd', num_keys, lua_script
 #
-#     r.myset 'testing', 'surprise', (err, res) ->
-#       err || r.myset 'testing', 'surprise', (err, res) ->
-#         err || r.myget 'testing', (err, res) ->
-#           err || console.log "It worked, testing = #{res}"
-#           r.quit()
+#     r.mycmd 'key', 'value', callback
 
 exports.lua = (name, keys, script) ->
 

@@ -8,7 +8,7 @@ cleanup = (err) ->
   err
 
 # lua command name, number of keys, script
-lua 'myset', 2, 'return redis.call("set", KEYS[1], KEYS[2])'
+lua 'myset', 1, 'return redis.call("set", KEYS[1], ARGV[1])'
 lua 'myget', 1, 'return redis.call("get", KEYS[1])'
 
 # The first time eval will be used
