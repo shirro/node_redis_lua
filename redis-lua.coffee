@@ -15,7 +15,7 @@ sha = (str) ->
 
 #### Example usage
 #     redis = require('redis')
-#     require('redis_lua').attachclient(redis)
+#     require('redis_lua').attachLua(redis)
 #     r = redis.createClient()
 #
 #     redis.lua 'mycmd', num_keys, lua_script
