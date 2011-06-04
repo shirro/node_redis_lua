@@ -9,50 +9,57 @@
 # The [source is on github](https://github.com/shirro/node_redis_lua)
 
 createHash = require('crypto').createHash
-RedisClient = require('redis').RedisClient
 
 sha = (str) ->
   createHash('sha1').update(str).digest('hex')
 
 #### Example usage
-#     r = require('redis').createClient()
-#     lua = require('node_redis_lua').lua
+#     redis = require('redis')
+#     require('redis_lua').attachclient(redis)
+#     r = redis.createClient()
 #
-#     lua 'mycmd', num_keys, lua_script
+#     redis.lua 'mycmd', num_keys, lua_script
 #
 #     r.mycmd 'key', 'value', callback
 
-exports.lua = (name, keys, script) ->
+RedisClient = null
+
+
+lua = (name, keys, script) ->
 
   script_sha = null
 
-  # Use send_command to work with unpatched node-redis without eval, evalsha
-  eval_cmd = (redis, params, cb) ->
+  # Use send_command to work with unpatched node-db without eval, evalsha
+  eval_cmd = (db, params, cb) ->
     params.unshift script
     params.unshift 'eval'
     params.push cb
-    redis.send_command.apply redis, params
+    db.send_command.apply db, params
 
-  evalsha_cmd = (redis, params, cb) ->
+  evalsha_cmd = (db, params, cb) ->
     params.unshift script_sha
     params.unshift 'evalsha'
     params.push cb
-    redis.send_command.apply redis, params
+    db.send_command.apply db, params
 
   # Add our new Lua command into the RedisClient prototype so it looks
-  # like native redis
+  # like native db
   RedisClient.prototype[name] = (params..., cb) ->
-    redis = this
+    db = this
     params.unshift keys
 
     if script_sha
-      evalsha_cmd redis, params, (err, res) ->
+      evalsha_cmd db, params, (err, res) ->
         # Is this really the right way to test?
         if err and err.message.indexOf('NOSCRIPT') > 0
-          eval_cmd redis, params.slice(1,-1), cb
+          eval_cmd db, params.slice(1,-1), cb
         else
           cb err, res
     else
       script_sha = script_sha or sha script
-      eval_cmd redis, params, cb
+      eval_cmd db, params, cb
 
+exports.attachLua = (redis) ->
+  RedisClient = redis.RedisClient
+  redis.lua = lua
+  redis

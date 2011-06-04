@@ -1,7 +1,9 @@
 #/usr/bin/env coffee
-r = require('redis').createClient()
-lua = require('redis-lua').lua
-rp = require('redis').print
+redis = require 'redis'
+attachLua = require('../redis-lua').attachLua
+
+r = attachLua(redis).createClient()
+
 
 cleanup = (err) ->
   if err
@@ -10,7 +12,7 @@ cleanup = (err) ->
     process.exit
   err
 
-lua 'hsetmax', 2, """
+redis.lua 'hsetmax', 2, """
   local current = tonumber(redis.call('hget',KEYS[1], KEYS[2]))
   local max = tonumber(ARGV[1])
   if current == nil or current < max then

@@ -7,7 +7,7 @@ Requires:
 	Redis scripting branch, https://github.com/antirez/redis/tree/scripting
 
 Installation. Not in npm yet so clone the repo and use.
-
+    npm install redis
     npm install .
 
 To use require lua:

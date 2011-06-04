@@ -1,5 +1,7 @@
-r = require('redis').createClient()
-lua = require('redis-lua').lua
+redis = require 'redis'
+require('../redis-lua').attachLua(redis)
+
+r = redis.createClient()
 
 cleanup = (err) ->
   if err
@@ -8,8 +10,8 @@ cleanup = (err) ->
   err
 
 # lua command name, number of keys, script
-lua 'myset', 1, 'return redis.call("set", KEYS[1], ARGV[1])'
-lua 'myget', 1, 'return redis.call("get", KEYS[1])'
+redis.lua 'myset', 1, 'return redis.call("set", KEYS[1], ARGV[1])'
+redis.lua 'myget', 1, 'return redis.call("get", KEYS[1])'
 
 # The first time eval will be used
 r.myset 'testing', 'surprise', (err, res) ->
