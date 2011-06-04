@@ -1,7 +1,8 @@
 Patch redis script commands into node-redis prototype. Does not assume node-redis
 has been patched with scripting support so can use the standard version.
 
-### Eample usage
+Example usage
+
     r = require('redis').createClient()
     lua = require('node_redis_lua').lua
 

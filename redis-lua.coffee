@@ -1,10 +1,12 @@
 #
 # Copyright 2010 Paul Shirren <shirro@shirro.com>
 #
-# MIT licenced
+# [MIT licenced](http://opensource.org/licenses/mit-license.php)
 #
 # Patch lua commands into node-redis prototype. Does not assume node-redis
 # has been patched with scripting support so can use standard version.
+#
+# The [source is on github](https://github.com/shirro/node_redis_lua)
 
 createHash = require('crypto').createHash
 RedisClient = require('redis').RedisClient
