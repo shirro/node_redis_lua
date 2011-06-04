@@ -3,26 +3,29 @@ has been patched with scripting support so can use the standard version.
 
 Requires:
 	https://github.com/mranney/node_redis
-	coffescript (optional)
+	coffescript (optional - compile js included)
 	Redis scripting branch, https://github.com/antirez/redis/tree/scripting
 
-Installation. Not in npm yet so clone the repo and use.
+Installation. Not in npm repo yet so install from github source.
+
+    git clone https://github.com/shirro/node_redis_lua.git redis-lua
+    cd redis-lua
     npm install redis
     npm install .
 
 To use require lua:
 
-    lua = require('redis-lua').lua
+    redis = require('redis')
+    require('redis-lua').attachLua(redis)
 
 Add some redis scripts:
 
-    lua 'myset', 2, 'return redis.call("set", KEYS[1], KEYS[2])'
+    redis.lua 'myset', 2, 'return redis.call("set", KEYS[1], KEYS[2])'
 
 And call like a regular redis command:
 
-    r = require('redis').createClient()
-    r.myset 'testing', 'surprise', (err, res) ->
-    	if (err)
-		console.log err
-	else
-		console.log res
+    r = redis.createClient()
+    r.myset 'testing', 'surprise', redis.print
+
+The lua script is passed by eval first time and evalsha subsequently
+with fallback to eval.
