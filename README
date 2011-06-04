@@ -3,9 +3,10 @@ has been patched with scripting support so can use the standard version.
 
 Requires:
 	https://github.com/mranney/node_redis
-	coffescript
+	coffescript (optional)
+	Redis scripting branch, https://github.com/antirez/redis/tree/scripting
 
-Installation. Not in npm yet so clone the repo and use
+Installation. Not in npm yet so clone the repo and use.
 
     npm install .
 

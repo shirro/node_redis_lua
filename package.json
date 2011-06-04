@@ -13,14 +13,7 @@
     "url": "git://github.com/shirro/node_redis_lua.git"
   },
   "author": "Paul Shirren <shirro@shirro.com> (https://shirro.com/)",
-  "main": "./redis-lua.coffee",
-  "directories": {
-    "lib": "."
-  },
-  "dependencies": {
-    "coffee-script":">=1.1.1",
-    "redis":">=0.6.0"
-  },
+  "main": "./redis-lua.js",
   "engines": {
     "node": "*"
   }
