@@ -49,8 +49,9 @@ exports.attachLua = function(redis) {
       var
         cb,
         db,
+        that = this,
         params;
-      
+
       params = [].slice.call(arguments, 0, arguments.length);
       if (params.length > 0 && typeof params[params.length-1] == 'function') {
           cb = params.pop();
@@ -65,16 +66,16 @@ exports.attachLua = function(redis) {
       params.unshift(num_keys);
 
       if (script_sha) {
-        evalsha_cmd(this, script_sha, params, function(err, res) {
+        evalsha_cmd(that, script_sha, params, function(err, res) {
           if (err && err.message.indexOf('NOSCRIPT') > 0) {
-            eval_cmd(this, script, params.slice(1, -1), cb);
+            eval_cmd(that, script, params.slice(2, -1), cb);
           } else {
             cb(err, res);
           }
         });
       } else {
         script_sha = script_sha || sha(script);
-        eval_cmd(this, script, params, cb);
+        eval_cmd(that, script, params, cb);
       }
     };
   };

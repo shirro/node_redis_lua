@@ -1,8 +1,8 @@
 {
   "name": "redis-lua",
   "description": "Adds lua scripting to node_redis",
-  "version": "0.0.3",
-  "keywords": ["redis", "scripting", "lua", "coffeescript"],
+  "version": "0.0.4",
+  "keywords": ["redis", "scripting", "lua"],
   "licenses": [{
     "type": "MIT",
     "url": "http://opensource.org/licenses/mit-license.php"
