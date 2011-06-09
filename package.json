@@ -1,7 +1,7 @@
 {
   "name": "redis-lua",
   "description": "Adds lua scripting to node_redis",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "keywords": ["redis", "scripting", "lua", "coffeescript"],
   "licenses": [{
     "type": "MIT",
@@ -14,6 +14,14 @@
   },
   "author": "Paul Shirren <shirro@shirro.com> (https://shirro.com/)",
   "main": "./redis-lua.js",
+  "files": [
+     "README",
+     "redis-lua.js",
+     "package.json"
+  ],
+  "dependecies": {
+    "redis": ">=0.6.0"
+  },
   "engines": {
     "node": "*"
   }
