@@ -1,7 +1,7 @@
 {
   "name": "redis-lua",
   "description": "Adds lua scripting to node_redis",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "keywords": ["redis", "scripting", "lua"],
   "licenses": [{
     "type": "MIT",
@@ -20,7 +20,7 @@
      "package.json"
   ],
   "dependencies": {
-    "redis": ">=0.6.0"
+    "redis": ">=0.6.6"
   },
   "engines": {
     "node": "*"
