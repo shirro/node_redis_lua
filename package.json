@@ -19,7 +19,7 @@
      "redis-lua.js",
      "package.json"
   ],
-  "dependecies": {
+  "dependencies": {
     "redis": ">=0.6.0"
   },
   "engines": {
