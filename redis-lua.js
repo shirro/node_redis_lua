@@ -70,7 +70,7 @@ exports.attachLua = function(redis) {
 
       if (script_sha) {
         evalsha_cmd(that, script_sha, params, function(err, res) {
-          if (err && typeof err.message === 'string' && err.message.indexOf('NOSCRIPT') > 0) {
+          if (err && typeof err.message === 'string' && err.message.indexOf('NOSCRIPT') >= 0) {
             script_sha = undefined;
             eval_cmd(that, script, params.slice(1, -1), eval_cmd_callback.bind(null, cb));
           } else {
